@@ -11,13 +11,17 @@ env/
 .ipynb_checkpoints/
 *.ipynb_checkpoints
 
+# Great Expectations
+gx/
+great_expectations/uncommitted/
+
 # IDE
 .idea/
 .vscode/
 *.swp
 .DS_Store
 
-# Data ( >100MB)
+# Data (too large for GitHub >100MB)
 data/Bronze/*.xlsx
 
 # Docker
