@@ -27,4 +27,8 @@ data/Bronze/*.xlsx
 # Docker
 logs/
 
+# Pipeline logs
+pipeline.log
+pipeline_backup_*.log
+
 # reports/*.html

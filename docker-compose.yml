@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   postgres:
     image: postgres:15
@@ -18,7 +16,9 @@ services:
       retries: 5
 
   jupyter:
-    image: jupyter/scipy-notebook:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: dq_jupyter
     ports:
       - "8888:8888"
@@ -26,6 +26,8 @@ services:
       - ./:/home/jovyan/work
     environment:
       JUPYTER_ENABLE_LAB: "yes"
+      PYDEVD_DISABLE_FILE_VALIDATION: "1" 
+      PYTHONUNBUFFERED: "1"
     depends_on:
       postgres:
         condition: service_healthy

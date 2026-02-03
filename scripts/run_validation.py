@@ -33,7 +33,9 @@ def run_validation():
         df = pd.read_csv('data/Gold/games_gold.csv')
         print(f"Loaded {len(df):,} rows from CSV")
 
-    context = gx.get_context(mode="file", project_root_dir=".")
+    # Déterminer le bon répertoire racine (support Docker et local)
+    project_root = "/home/jovyan/work" if os.path.exists("/home/jovyan/work/gx") else "."
+    context = gx.get_context(mode="file", project_root_dir=project_root)
 
     try:
         checkpoint = context.checkpoints.get("games_checkpoint")
@@ -50,9 +52,9 @@ def run_validation():
 
     print(f"\nResults:")
     print(f"  Success: {result.success}")
-    print(f"  Evaluated: {stats.evaluated_expectations}")
-    print(f"  Successful: {stats.successful_expectations}")
-    print(f"  Failed: {stats.unsuccessful_expectations}")
+    print(f"  Evaluated: {stats['evaluated_expectations']}")
+    print(f"  Successful: {stats['successful_expectations']}")
+    print(f"  Failed: {stats['unsuccessful_expectations']}")
 
     try:
         engine = create_engine(CONNECTION_STRING)
@@ -60,9 +62,9 @@ def run_validation():
             'run_id': datetime.now().isoformat(),
             'expectation_suite': 'games_quality_suite',
             'success': result.success,
-            'evaluated_expectations': stats.evaluated_expectations,
-            'successful_expectations': stats.successful_expectations,
-            'unsuccessful_expectations': stats.unsuccessful_expectations
+            'evaluated_expectations': stats['evaluated_expectations'],
+            'successful_expectations': stats['successful_expectations'],
+            'unsuccessful_expectations': stats['unsuccessful_expectations']
         }])
         result_df.to_sql('validation_results', engine, if_exists='append', index=False)
         print("Results stored in PostgreSQL table 'validation_results'")
