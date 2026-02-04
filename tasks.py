@@ -18,6 +18,7 @@ import sys
 import os
 from datetime import datetime
 import shutil
+import time
 
 # Couleurs terminal
 CYAN = "\033[0;36m"
@@ -93,6 +94,34 @@ def docker_up():
 
     run("docker-compose up -d")
     log("✅ PostgreSQL démarre (healthcheck actif)", "SUCCESS")
+
+def setup_superset():
+    """Initialise Apache Superset avec réinstallation forcée de pip et du driver"""
+    log("📊 Configuration de Superset (Mode Robuste)...", "INFO")
+    
+    log("📥 Installation forcée de pip...", "INFO")
+    pip_install_cmd = (
+        'docker exec -u root superset bash -c '
+        '"apt-get update && apt-get install -y curl && '
+        'curl -sS https://bootstrap.pypa.io/get-pip.py | python3"'
+    )
+    run(pip_install_cmd)
+    
+    log("🔌 Installation du driver psycopg2...", "INFO")
+    run("docker exec -u root superset python3 -m pip install psycopg2-binary")
+    
+    log("⚙️ Initialisation de la base interne Superset...", "INFO")
+    run("docker exec superset superset db upgrade")
+    run("docker exec superset superset fab create-admin --username admin --firstname Admin --lastname User --email admin@superset.com --password admin", check=False)
+    run("docker exec superset superset init")
+
+    conn_cmd = (
+        "docker exec superset superset set_database_uri "
+        "--database_name DataQualitySteamDB "
+        "--uri postgresql+psycopg2://postgres:postgres@postgres:5432/games_db"
+    )
+    run(conn_cmd)
+    log("Superset est prêt et connecté sur http://localhost:8088", "SUCCESS")
 
 def load_data():
     """Charge les données dans PostgreSQL via Docker"""
@@ -180,6 +209,7 @@ def all_tasks():
     
     try:
         docker_up()
+        setup_superset()
         load_data()
         run_notebooks()
         generate_reports()
@@ -203,6 +233,7 @@ def all_tasks():
 # -------------------------
 tasks = {
     "docker": docker_up,
+    "superset": setup_superset,
     "load": load_data,
     "notebooks": run_notebooks,
     "reports": generate_reports,
