@@ -1,0 +1,40 @@
+parent,name*,displayName,description,synonyms,relatedTerms,references,tags,reviewers,owner,status
+,app_id,Application ID,"Identifiant unique attribué par Steam à chaque jeu. Clé primaire du dataset permettant de référencer un jeu de manière univoque.","ID;game_id;steam_id",,,"PII.None;Tier.Gold",,,Approved
+,name,Game Name,"Nom officiel du jeu tel que publié sur Steam. Peut contenir des caractères spéciaux et être dans différentes langues.","title;game_title;nom",,,"PII.None;Tier.Gold",,,Approved
+,release_date,Release Date,"Date de sortie officielle du jeu sur Steam au format YYYY-MM-DD. Permet d'analyser les tendances temporelles.","launch_date;date_sortie",,,"PII.None;Tier.Gold",,,Approved
+,release_year,Release Year,"Année de sortie extraite de release_date. Dimension temporelle clé pour les analyses de tendances.","year;année",,,"PII.None;Tier.Gold",,,Approved
+,is_legacy,Legacy Game,"Indicateur booléen identifiant les jeux sortis avant 2015. Utile pour filtrer les jeux anciens.","old_game;retro",,,"PII.None;Tier.Gold",,,Approved
+,price,Price,"Prix de vente actuel du jeu en USD. Valeur 0 = jeu gratuit (free-to-play).","cost;prix;amount",,,"PII.None;Tier.Gold;Sensitive.Financial",,,Approved
+,discount,Discount Percentage,"Pourcentage de réduction appliqué au prix (0-100).","reduction;promo;sale",,,"PII.None;Tier.Gold;Sensitive.Financial",,,Approved
+,dlc_count,DLC Count,"Nombre de contenus téléchargeables (DLC) disponibles pour le jeu.","addon_count;extension_count",,,"PII.None;Tier.Gold",,,Approved
+,price_outlier,Price Outlier,"Flag identifiant les jeux avec des prix anormalement élevés ou bas.","anomaly;aberrant",,,"PII.None;Tier.Gold;DataQuality",,,Approved
+,estimated_owners,Owners Range,"Fourchette d'estimation du nombre de propriétaires au format texte.","ownership_range;players_range",,,"PII.None;Tier.Gold",,,Approved
+,owners_estimate,Owners Estimate,"Estimation médiane du nombre de propriétaires calculée comme (owners_min + owners_max) / 2.","player_count;install_base",,,"PII.None;Tier.Gold;KPI",,,Approved
+,owners_min,Minimum Owners,"Borne inférieure de l'estimation du nombre de propriétaires.","min_players",,,"PII.None;Tier.Gold",,,Approved
+,owners_max,Maximum Owners,"Borne supérieure de l'estimation du nombre de propriétaires.","max_players",,,"PII.None;Tier.Gold",,,Approved
+,peak_ccu,Peak Concurrent Users,"Pic de joueurs simultanés enregistré sur Steam. Indicateur de popularité.","concurrent_players;peak_players",,,"PII.None;Tier.Gold;KPI",,,Approved
+,required_age,Required Age,"Âge minimum requis selon PEGI/ESRB (0, 12, 16, 18).","age_rating;PEGI;ESRB",,,"PII.None;Tier.Gold;Sensitive.Compliance",,,Approved
+,windows,Windows Support,"Indicateur booléen de compatibilité Windows. True = jeu jouable sur Windows.","win_support;windows_compatible",,,"PII.None;Tier.Gold",,,Approved
+,mac,Mac Support,"Indicateur booléen de compatibilité macOS. True = jeu jouable sur Mac.","macos;osx_support",,,"PII.None;Tier.Gold",,,Approved
+,linux,Linux Support,"Indicateur booléen de compatibilité Linux. True = jeu jouable sur Linux.","unix_support;linux_compatible",,,"PII.None;Tier.Gold",,,Approved
+,metacritic_score,Metacritic Score,"Note agrégée 0-100 de critiques professionnelles.","critic_score;meta_score",,,"PII.None;Tier.Gold;KPI",,,Approved
+,user_score,User Score,"Score utilisateur Steam (0-100). Distinct du review_score.","player_rating;community_score",,,"PII.None;Tier.Gold;KPI",,,Approved
+,positive,Positive Reviews,"Nombre d'avis positifs (thumbs up).","thumbs_up;upvotes;good_reviews",,,"PII.None;Tier.Gold;KPI",,,Approved
+,negative,Negative Reviews,"Nombre d'avis négatifs (thumbs down).","thumbs_down;downvotes;bad_reviews",,,"PII.None;Tier.Gold;KPI",,,Approved
+,total_reviews,Total Reviews,"Somme positive + negative. Indicateur du niveau d'engagement.","review_count;total_ratings",,,"PII.None;Tier.Gold;KPI",,,Approved
+,review_score,Review Score,"Pourcentage de reviews positives = (positive / total) x 100.","rating_percentage;approval_rate",,,"PII.None;Tier.Gold;KPI",,,Approved
+,average_playtime_forever,Average Playtime Total,"Temps de jeu moyen total en minutes depuis l'achat du jeu.","avg_playtime;mean_playtime",,,"PII.None;Tier.Gold;KPI",,,Approved
+,average_playtime_two_weeks,Average Playtime 2 Weeks,"Temps de jeu moyen des 2 dernières semaines.","recent_playtime;avg_playtime_2w",,,"PII.None;Tier.Gold;KPI",,,Approved
+,median_playtime_forever,Median Playtime Total,"Temps de jeu médian total en minutes.","median_playtime",,,"PII.None;Tier.Gold;KPI",,,Approved
+,median_playtime_two_weeks,Median Playtime 2 Weeks,"Temps de jeu médian des 2 dernières semaines.","median_playtime_2w",,,"PII.None;Tier.Gold;KPI",,,Approved
+,tag_count,Tag Count,"Nombre de tags Steam associés au jeu.","number_tags",,,"PII.None;Tier.Gold",,,Approved
+,genre_count,Genre Count,"Nombre de genres assignés au jeu.","number_genres",,,"PII.None;Tier.Gold",,,Approved
+,has_singleplayer,Singleplayer Flag,"Booléen indiquant la présence d'un mode solo.","single_player;solo_mode",,,"PII.None;Tier.Gold",,,Approved
+,has_indie,Indie Flag,"Booléen identifiant les jeux indépendants.","independent;indie_game",,,"PII.None;Tier.Gold",,,Approved
+,has_rpg,RPG Flag,"Booléen identifiant les jeux de rôle (RPG).","role_playing_game;jdr",,,"PII.None;Tier.Gold",,,Approved
+,has_action,Action Flag,"Booléen identifiant les jeux d'action.","action_game",,,"PII.None;Tier.Gold",,,Approved
+,has_strategy,Strategy Flag,"Booléen identifiant les jeux de stratégie.","strategy_game;tactical",,,"PII.None;Tier.Gold",,,Approved
+,has_simulation,Simulation Flag,"Booléen identifiant les jeux de simulation.","sim_game;simulator",,,"PII.None;Tier.Gold",,,Approved
+,primary_genre,Primary Genre,"Genre principal du jeu (1er de la liste).","main_genre;first_genre",,,"PII.None;Tier.Gold",,,Approved
+,primary_tag,Primary Tag,"Tag principal du jeu (1er de la liste).","main_tag;first_tag",,,"PII.None;Tier.Gold",,,Approved
+,name_clean,Clean Name,"Nom du jeu nettoyé sans caractères spéciaux. Utilisé pour matching.","normalized_name;clean_title",,,"PII.None;Tier.Gold;DataQuality",,,Approved

@@ -1,0 +1,169 @@
+volumes:
+  ingestion-volume-dag-airflow:
+  ingestion-volume-dags:
+  ingestion-volume-tmp:
+  openmetadata_db_data:
+  openmetadata_es_data:
+
+networks:
+  app_net:
+    driver: bridge
+  # Réseau partagé avec le projet principal
+  data-quality-audit_default:
+    external: true
+
+services:
+  # MySQL - Base de données pour OpenMetadata
+  mysql:
+    container_name: openmetadata_mysql
+    image: openmetadata/db:1.2.0
+    restart: always
+    command: --sort_buffer_size=10M
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    expose:
+      - 3306
+    ports:
+      - "3307:3306"
+    networks:
+      - app_net
+    volumes:
+      - openmetadata_db_data:/var/lib/mysql
+    healthcheck:
+      test: mysql --user=root --password=$$MYSQL_ROOT_PASSWORD --silent --execute "use openmetadata_db;"
+      interval: 15s
+      timeout: 10s
+      retries: 10
+
+  # Elasticsearch - Moteur de recherche
+  elasticsearch:
+    container_name: openmetadata_elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.10.2
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms1024m -Xmx1024m
+      - xpack.security.enabled=false
+      - xpack.security.http.ssl.enabled=false
+      - xpack.security.transport.ssl.enabled=false
+    expose:
+      - 9200
+      - 9300
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    networks:
+      - app_net
+    volumes:
+      - openmetadata_es_data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: curl -s http://localhost:9200/_cat/health | grep -q green
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # OpenMetadata Server
+  openmetadata-server:
+    container_name: dq_openmetadata
+    image: openmetadata/server:1.2.0
+    restart: always
+    depends_on:
+      elasticsearch:
+        condition: service_started
+      mysql:
+        condition: service_started
+    expose:
+      - 8585
+      - 8586
+    ports:
+      - "8585:8585"
+      - "8586:8586"
+    networks:
+      - app_net
+      - data-quality-audit_default
+    environment:
+      DB_DRIVER_CLASS: com.mysql.cj.jdbc.Driver
+      DB_SCHEME: mysql
+      DB_PARAMS: allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
+      DB_USER: ${MYSQL_USER}
+      DB_USER_PASSWORD: ${MYSQL_PASSWORD}
+      DB_HOST: mysql
+      DB_PORT: 3306
+      OM_DATABASE: ${MYSQL_DATABASE}
+      SEARCH_TYPE: elasticsearch
+      ELASTICSEARCH_HOST: elasticsearch
+      ELASTICSEARCH_PORT: 9200
+      ELASTICSEARCH_SCHEME: http
+      
+      # Auth Configuration
+      AUTHENTICATION_PROVIDER: basic
+      AUTHENTICATION_PUBLIC_KEYS: "[http://openmetadata-server:8585/api/v1/system/config/jwks]"
+      AUTHORIZER_CLASS_NAME: org.openmetadata.service.security.DefaultAuthorizer
+      AUTHORIZER_REQUEST_FILTER: org.openmetadata.service.security.JwtFilter
+      AUTHORIZER_ADMIN_PRINCIPALS: "[admin]"
+      AUTHORIZER_PRINCIPAL_DOMAIN: "open-metadata.org"
+      
+      # Pipeline Service Client
+      PIPELINE_SERVICE_CLIENT_ENABLED: true
+      PIPELINE_SERVICE_CLIENT_CLASS_NAME: "org.openmetadata.service.clients.pipeline.airflow.AirflowRESTClient"
+      PIPELINE_SERVICE_CLIENT_HOST_IP: "http://ingestion:8080"
+      PIPELINE_SERVICE_CLIENT_VERIFY_SSL: "no-ssl"
+        
+    volumes:
+      - ./conf/openmetadata.yaml:/openmetadata.yaml
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:8586/healthcheck || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 15
+      start_period: 180s
+
+  # Airflow - Pour l'ingestion de métadonnées
+  ingestion:
+    container_name: openmetadata_ingestion
+    image: openmetadata/ingestion:1.2.0
+    extra_hosts:
+      - "dq_openmetadata:172.17.0.1"
+    depends_on:
+      mysql:
+        condition: service_started
+      openmetadata-server:
+        condition: service_started
+    expose:
+      - 8080
+    ports:
+      - "8082:8080"
+    networks:
+      - app_net
+      - data-quality-audit_default
+    environment:
+      PIPELINE_SERVICE_CLIENT_HOST_IP: "http://ingestion:8080"
+      AIRFLOW_HOST: "http://ingestion:8080"
+      AIRFLOW__API__AUTH_BACKENDS: "airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session"
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: mysql+pymysql://${AIRFLOW_USER}:${AIRFLOW_PASSWORD}@mysql:3306/${AIRFLOW_DB}
+      AIRFLOW__OPENMETADATA_AIRFLOW_APIS__DAG_GENERATED_CONFIGS: "/opt/airflow/dag_generated_configs"
+      AIRFLOW_HOME: /opt/airflow
+      AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
+      DB_SCHEME: mysql+pymysql
+      DB_HOST: mysql
+      DB_PORT: 3306
+      AIRFLOW_DB: ${AIRFLOW_DB}
+      DB_USER: ${AIRFLOW_USER}
+      DB_PASSWORD: ${AIRFLOW_PASSWORD}
+      # OpenMetadata Server
+      SERVER_HOST_API_URL: http://dq_openmetadata:8585/api
+      METADATA_FERNET_KEY: ${METADATA_FERNET_KEY}
+    volumes:
+      - ingestion-volume-dag-airflow:/opt/airflow/dag_generated_configs
+      - ingestion-volume-dags:/opt/airflow/dags
+      - ingestion-volume-tmp:/tmp
+      - ./ingestion:/opt/airflow/ingestion
+    healthcheck:
+      test: timeout 10s bash -c ':> /dev/tcp/127.0.0.1/8080' || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s

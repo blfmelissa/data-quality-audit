@@ -1,0 +1,69 @@
+# OpenMetadata Configuration
+---
+clusterName: ${CLUSTER_NAME:-openmetadata}
+
+# Database Configuration
+database:
+  driverClass: ${DB_DRIVER_CLASS:-com.mysql.cj.jdbc.Driver}
+  dbScheme: ${DB_SCHEME:-mysql}
+  dbParams: ${DB_PARAMS:-allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC}
+  databaseName: ${OM_DATABASE:-openmetadata_db}
+  host: ${DB_HOST:-localhost}
+  port: ${DB_PORT:-3306}
+  username: ${DB_USER:-openmetadata_user}
+  password: ${DB_USER_PASSWORD:-openmetadata_password}
+
+# Elasticsearch Configuration
+elasticsearch:
+  host: ${ELASTICSEARCH_HOST:-localhost}
+  port: ${ELASTICSEARCH_PORT:-9200}
+  scheme: ${ELASTICSEARCH_SCHEME:-http}
+  connectionTimeoutSecs: ${ELASTICSEARCH_CONNECTION_TIMEOUT_SECS:-5}
+  socketTimeoutSecs: ${ELASTICSEARCH_SOCKET_TIMEOUT_SECS:-60}
+  batchSize: ${ELASTICSEARCH_BATCH_SIZE:-10}
+  searchType: ${SEARCH_TYPE:-elasticsearch}
+
+# Event Handler Configuration
+eventHandlerConfiguration:
+  eventHandlerClassNames:
+    - "org.openmetadata.service.events.AuditEventHandler"
+    - "org.openmetadata.service.events.ChangeEventHandler"
+
+# Pipeline Service Client Configuration
+pipelineServiceClientConfiguration:
+  apiEndpoint: ${PIPELINE_SERVICE_CLIENT_HOST_IP:-http://ingestion:8080} # Utilise le nom du service Docker
+  metadataApiEndpoint: ${SERVER_HOST_API_URL:-http://dq_openmetadata:8585/api}
+  enabled: ${PIPELINE_SERVICE_CLIENT_ENABLED:-true}
+  className: ${PIPELINE_SERVICE_CLIENT_CLASS_NAME:-"org.openmetadata.service.clients.pipeline.airflow.AirflowRESTClient"}
+  verifySSL: ${PIPELINE_SERVICE_CLIENT_VERIFY_SSL:-"no-ssl"}
+  sslConfig:
+    certificatePath: ${PIPELINE_SERVICE_CLIENT_SSL_CERT_PATH:-""}
+
+# Authorizer Configuration
+authorizerConfiguration:
+  className: ${AUTHORIZER_CLASS_NAME:-org.openmetadata.service.security.DefaultAuthorizer}
+  adminPrincipals: ${AUTHORIZER_ADMIN_PRINCIPALS:-[admin]}
+  principalDomain: ${AUTHORIZER_PRINCIPAL_DOMAIN:-"open-metadata.org"}
+
+# Authentication Configuration
+authenticationConfiguration:
+  provider: ${AUTHENTICATION_PROVIDER:-basic}
+  publicKeyUrls: ${AUTHENTICATION_PUBLIC_KEYS:-[http://localhost:8585/api/v1/system/config/jwks]}
+  authority: ${AUTHENTICATION_AUTHORITY:-https://accounts.google.com}
+  clientId: ${AUTHENTICATION_CLIENT_ID:-""}
+  callbackUrl: ${AUTHENTICATION_CALLBACK_URL:-""}
+
+# JWT Configuration
+jwtTokenConfiguration:
+  rsapublicKeyFilePath: ${RSA_PUBLIC_KEY_FILE_PATH:-"./conf/public_key.der"}
+  rsaprivateKeyFilePath: ${RSA_PRIVATE_KEY_FILE_PATH:-"./conf/private_key.der"}
+  jwtissuer: ${JWT_ISSUER:-"open-metadata.org"}
+  keyId: ${JWT_KEY_ID:-"Gb389a-9f76-gdjs-a92j-0242bk94356"}
+
+# Secrets Manager Configuration
+secretsManagerConfiguration:
+  secretsManager: ${SECRET_MANAGER:-noop}
+
+# Logging
+logging:
+  level: ${LOG_LEVEL:-INFO}

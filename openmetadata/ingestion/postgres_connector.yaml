@@ -1,0 +1,29 @@
+source:
+  type: postgres
+  serviceName: games_database
+  serviceConnection:
+    config:
+      type: Postgres
+      hostPort: postgres:5432 
+      username: postgres
+      authType:
+        password: postgres
+      database: games_db
+  sourceConfig:
+    config:
+      type: DatabaseMetadata
+      schemaFilterPattern:
+        includes: [public]
+      tableFilterPattern:
+        includes: [games_brut, games_clean, games_gold, game_tags, game_genres, game_developers, game_publishers]
+
+sink:
+  type: metadata-rest
+  config: {}
+
+workflowConfig:
+  openMetadataServerConfig:
+    hostPort: http://dq_openmetadata:8585/api
+    authProvider: openmetadata
+    securityConfig:
+      jwtToken: "eyJraWQiOiJHYjM4OWEtOWY3Ni1nZGpzLWE5MmotMDI0MmJrOTQzNTYiLCJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJvcGVuLW1ldGFkYXRhLm9yZyIsInN1YiI6ImluZ2VzdGlvbi1ib3QiLCJlbWFpbCI6ImluZ2VzdGlvbi1ib3RAb3Blbi1tZXRhZGF0YS5vcmciLCJpc0JvdCI6dHJ1ZSwidG9rZW5UeXBlIjoiQk9UIiwiaWF0IjoxNzcwMzA5MDE3LCJleHAiOm51bGx9.BcNfgta8vabqnd9B9neil6L0lITKr9bspP5IQ7BmFO8Ls1BBiDOHVXtNssLUtxHLi08INlPCNZBiOA1YfRkT0cJqrQ7ri1-XJkcqct3O2n1VWrDLdgCBTvkY9Gim5tNLm6p9jKLH0kBWsv_0wfd1gdGUKvUU9GWmwWhmiu5jMuyi9vFfqPWOdsmgb158a8f7FbsqHLSCrOomWWofnLYg-A-VPihpC9fkEPVgjaqBVoUq4U-prfNvsmZ2EPuirPsHJ8BlYn_27RkacLkvouoALv7p9fX-ihVZbpMe_30JoAWQtta43_beCQ19j1iEWrwyHNw3neIG2GrC3cI0WOIcxA"

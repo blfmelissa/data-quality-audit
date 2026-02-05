@@ -1,0 +1,16 @@
+# OpenMetadata
+# .env est committé volontairement pour faciliter l'évaluation du projet
+# Les valeurs sont des credentials de développement local uniquement
+# NE PAS UTILISER EN PRODUCTION !
+
+conf/private_key.der
+conf/public_key.der
+
+# Airflow
+logs/
+dags/__pycache__/
+*.pyc
+
+# Ingestion logs
+ingestion/logs/
+ingestion/__pycache__/

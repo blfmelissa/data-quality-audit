@@ -1,0 +1,10 @@
+# Dépendances Python pour l'ingestion OpenMetadata
+
+# OpenMetadata CLI pour l'ingestion
+openmetadata-ingestion[postgres]==1.2.0
+
+# Connecteur PostgreSQL
+psycopg2-binary>=2.9.0
+
+# HTTP requests pour les vérifications
+requests>=2.28.0
