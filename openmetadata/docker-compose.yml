@@ -59,7 +59,7 @@ services:
     volumes:
       - openmetadata_es_data:/usr/share/elasticsearch/data
     healthcheck:
-      test: curl -s http://localhost:9200/_cat/health | grep -q green
+      test: curl -s http://localhost:9200/_cat/health | grep -qE 'green|yellow'
       interval: 30s
       timeout: 10s
       retries: 5
@@ -71,9 +71,9 @@ services:
     restart: always
     depends_on:
       elasticsearch:
-        condition: service_started
+        condition: service_healthy
       mysql:
-        condition: service_started
+        condition: service_healthy
     expose:
       - 8585
       - 8586
@@ -96,7 +96,7 @@ services:
       ELASTICSEARCH_HOST: elasticsearch
       ELASTICSEARCH_PORT: 9200
       ELASTICSEARCH_SCHEME: http
-      
+
       # Auth Configuration
       AUTHENTICATION_PROVIDER: basic
       AUTHENTICATION_PUBLIC_KEYS: "[http://openmetadata-server:8585/api/v1/system/config/jwks]"
@@ -104,13 +104,13 @@ services:
       AUTHORIZER_REQUEST_FILTER: org.openmetadata.service.security.JwtFilter
       AUTHORIZER_ADMIN_PRINCIPALS: "[admin]"
       AUTHORIZER_PRINCIPAL_DOMAIN: "open-metadata.org"
-      
+
       # Pipeline Service Client
       PIPELINE_SERVICE_CLIENT_ENABLED: true
       PIPELINE_SERVICE_CLIENT_CLASS_NAME: "org.openmetadata.service.clients.pipeline.airflow.AirflowRESTClient"
       PIPELINE_SERVICE_CLIENT_HOST_IP: "http://ingestion:8080"
       PIPELINE_SERVICE_CLIENT_VERIFY_SSL: "no-ssl"
-        
+
     volumes:
       - ./conf/openmetadata.yaml:/openmetadata.yaml
     healthcheck:
@@ -124,13 +124,19 @@ services:
   ingestion:
     container_name: openmetadata_ingestion
     image: openmetadata/ingestion:1.2.0
-    extra_hosts:
-      - "dq_openmetadata:172.17.0.1"
+    restart: on-failure
     depends_on:
       mysql:
-        condition: service_started
+        condition: service_healthy
       openmetadata-server:
         condition: service_started
+    entrypoint: /bin/bash
+    command:
+      - -c
+      - |
+        airflow db migrate &&
+        airflow users create --username admin --password admin --firstname admin --lastname admin --role Admin --email admin@example.com 2>/dev/null;
+        exec airflow webserver --port 8080
     expose:
       - 8080
     ports:

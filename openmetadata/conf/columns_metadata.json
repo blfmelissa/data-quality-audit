@@ -181,178 +181,145 @@
   "games_clean": {
     "app_id": {
       "description": "Identifiant unique du jeu Steam. Clé primaire nettoyée et validée.",
-      "tags": ["PII.None", "Tier.Silver"],
-      "glossaryTerm": "app_id"
+      "tags": ["PII.None", "Tier.Silver"]
     },
     "name": {
       "description": "Nom du jeu après nettoyage des caractères spéciaux et validation.",
-      "tags": ["PII.None", "Tier.Silver"],
-      "glossaryTerm": "name"
+      "tags": ["PII.None", "Tier.Silver"]
     },
     "release_date": {
       "description": "Date de sortie validée et standardisée au format ISO 8601.",
-      "tags": ["PII.None", "Tier.Silver"],
-      "glossaryTerm": "release_date"
+      "tags": ["PII.None", "Tier.Silver"]
     },
     "price": {
       "description": "Prix nettoyé et converti en format numérique décimal.",
-      "tags": ["PII.None", "Tier.Silver", "Sensitive.Financial"],
-      "glossaryTerm": "price"
+      "tags": ["PII.None", "Tier.Silver", "Sensitive.Financial"]
     },
     "discount": {
       "description": "Pourcentage de réduction validé et normalisé (0-100).",
-      "tags": ["PII.None", "Tier.Silver", "Sensitive.Financial"],
-      "glossaryTerm": "discount"
+      "tags": ["PII.None", "Tier.Silver", "Sensitive.Financial"]
     },
     "dlc_count": {
       "description": "Nombre de DLC après validation (valeurs négatives corrigées).",
-      "tags": ["PII.None", "Tier.Silver"],
-      "glossaryTerm": "dlc_count"
+      "tags": ["PII.None", "Tier.Silver"]
     },
     "estimated_owners": {
       "description": "Fourchette d'estimation standardisée après nettoyage.",
-      "tags": ["PII.None", "Tier.Silver"],
-      "glossaryTerm": "estimated_owners"
+      "tags": ["PII.None", "Tier.Silver"]
     },
     "peak_ccu": {
       "description": "Pic de joueurs simultanés validé (valeurs manquantes imputées).",
-      "tags": ["PII.None", "Tier.Silver", "Other.KPI"],
-      "glossaryTerm": "peak_ccu"
+      "tags": ["PII.None", "Tier.Silver", "Other.KPI"]
     },
     "required_age": {
       "description": "Âge minimum standardisé selon classifications PEGI.",
-      "tags": ["PII.None", "Tier.Silver", "Sensitive.Compliance"],
-      "glossaryTerm": "required_age"
+      "tags": ["PII.None", "Tier.Silver", "Sensitive.Compliance"]
     },
     "windows": {
       "description": "Support Windows validé et converti en booléen.",
-      "tags": ["PII.None", "Tier.Silver"],
-      "glossaryTerm": "windows"
+      "tags": ["PII.None", "Tier.Silver"]
     },
     "mac": {
       "description": "Support Mac validé et converti en booléen.",
-      "tags": ["PII.None", "Tier.Silver"],
-      "glossaryTerm": "mac"
+      "tags": ["PII.None", "Tier.Silver"]
     },
     "linux": {
       "description": "Support Linux validé et converti en booléen.",
-      "tags": ["PII.None", "Tier.Silver"],
-      "glossaryTerm": "linux"
+      "tags": ["PII.None", "Tier.Silver"]
     },
     "metacritic_score": {
       "description": "Score Metacritic validé (0-100) avec valeurs aberrantes corrigées.",
-      "tags": ["PII.None", "Tier.Silver", "Other.KPI"],
-      "glossaryTerm": "metacritic_score"
+      "tags": ["PII.None", "Tier.Silver", "Other.KPI"]
     },
     "recommendations": {
       "description": "Nombre de recommandations nettoyé (valeurs manquantes = 0).",
-      "tags": ["PII.None", "Tier.Silver", "Other.KPI"],
-      "glossaryTerm": "recommendations"
+      "tags": ["PII.None", "Tier.Silver", "Other.KPI"]
     },
     "positive": {
       "description": "Avis positifs après validation et correction.",
-      "tags": ["PII.None", "Tier.Silver"],
-      "glossaryTerm": "positive"
+      "tags": ["PII.None", "Tier.Silver"]
     },
     "negative": {
       "description": "Avis négatifs après validation et correction.",
-      "tags": ["PII.None", "Tier.Silver"],
-      "glossaryTerm": "negative"
+      "tags": ["PII.None", "Tier.Silver"]
     },
     "genres": {
       "description": "Genres nettoyés et normalisés.",
-      "tags": ["PII.None", "Tier.Silver"],
-      "glossaryTerm": "genres"
+      "tags": ["PII.None", "Tier.Silver"]
     },
     "tags": {
       "description": "Tags Steam nettoyés et dédupliqués.",
-      "tags": ["PII.None", "Tier.Silver"],
-      "glossaryTerm": "tags"
+      "tags": ["PII.None", "Tier.Silver"]
     },
     "developers": {
       "description": "Développeurs après nettoyage et standardisation.",
-      "tags": ["PII.None", "Tier.Silver"],
-      "glossaryTerm": "developers"
+      "tags": ["PII.None", "Tier.Silver"]
     },
     "publishers": {
       "description": "Éditeurs après nettoyage et standardisation.",
-      "tags": ["PII.None", "Tier.Silver"],
-      "glossaryTerm": "publishers"
+      "tags": ["PII.None", "Tier.Silver"]
     },
     "categories": {
       "description": "Catégories Steam nettoyées et normalisées.",
-      "tags": ["PII.None", "Tier.Silver"],
-      "glossaryTerm": "categories"
+      "tags": ["PII.None", "Tier.Silver"]
     }
   },
   "games_brut": {
     "app_id": {
       "description": "Identifiant brut extrait de l'API Steam. Peut contenir des valeurs nulles ou dupliquées.",
-      "tags": ["PII.None", "Tier.Bronze"],
-      "glossaryTerm": "app_id"
+      "tags": ["PII.None", "Tier.Bronze"]
     },
     "name": {
       "description": "Nom brut du jeu tel que retourné par l'API Steam. Non nettoyé.",
-      "tags": ["PII.None", "Tier.Bronze"],
-      "glossaryTerm": "name"
+      "tags": ["PII.None", "Tier.Bronze"]
     },
     "release_date": {
       "description": "Date de sortie brute extraite de l'API. Format variable, peut être invalide.",
-      "tags": ["PII.None", "Tier.Bronze"],
-      "glossaryTerm": "release_date"
+      "tags": ["PII.None", "Tier.Bronze"]
     },
     "price": {
       "description": "Prix brut extrait de l'API. Peut contenir des valeurs aberrantes ou manquantes.",
-      "tags": ["PII.None", "Tier.Bronze", "Sensitive.Financial"],
-      "glossaryTerm": "price"
+      "tags": ["PII.None", "Tier.Bronze", "Sensitive.Financial"]
     }
   },
   "game_tags": {
-    "tag_id": {
-      "description": "Identifiant unique du tag. Clé primaire de la dimension.",
-      "tags": ["PII.None", "Tier.Gold"],
-      "glossaryTerm": "tag_id"
+    "app_id": {
+      "description": "Identifiant unique du jeu Steam. Clé étrangère vers games_gold.",
+      "tags": ["PII.None", "Tier.Gold"]
     },
-    "tag_name": {
-      "description": "Nom du tag Steam (ex: Singleplayer, Multiplayer, Co-op).",
-      "tags": ["PII.None", "Tier.Gold"],
-      "glossaryTerm": "tag_name"
+    "tag": {
+      "description": "Tag Steam associé au jeu (ex: Singleplayer, Multiplayer, Co-op).",
+      "tags": ["PII.None", "Tier.Gold"]
     }
   },
   "game_genres": {
-    "genre_id": {
-      "description": "Identifiant unique du genre. Clé primaire de la dimension.",
-      "tags": ["PII.None", "Tier.Gold"],
-      "glossaryTerm": "genre_id"
+    "app_id": {
+      "description": "Identifiant unique du jeu Steam. Clé étrangère vers games_gold.",
+      "tags": ["PII.None", "Tier.Gold"]
     },
-    "genre_name": {
-      "description": "Nom du genre (ex: Action, RPG, Strategy, Adventure).",
-      "tags": ["PII.None", "Tier.Gold"],
-      "glossaryTerm": "genre_name"
+    "genre": {
+      "description": "Genre officiel Steam du jeu (ex: Action, RPG, Strategy, Adventure).",
+      "tags": ["PII.None", "Tier.Gold"]
     }
   },
   "game_developers": {
-    "developer_id": {
-      "description": "Identifiant unique du développeur. Clé primaire de la dimension.",
-      "tags": ["PII.None", "Tier.Gold"],
-      "glossaryTerm": "developer_id"
+    "app_id": {
+      "description": "Identifiant unique du jeu Steam. Clé étrangère vers games_gold.",
+      "tags": ["PII.None", "Tier.Gold"]
     },
-    "developer_name": {
+    "developer": {
       "description": "Nom du studio de développement (ex: Valve, CD Projekt Red).",
-      "tags": ["PII.None", "Tier.Gold"],
-      "glossaryTerm": "developer_name"
+      "tags": ["PII.None", "Tier.Gold"]
     }
   },
   "game_publishers": {
-    "publisher_id": {
-      "description": "Identifiant unique de l'éditeur. Clé primaire de la dimension.",
-      "tags": ["PII.None", "Tier.Gold"],
-      "glossaryTerm": "publisher_id"
+    "app_id": {
+      "description": "Identifiant unique du jeu Steam. Clé étrangère vers games_gold.",
+      "tags": ["PII.None", "Tier.Gold"]
     },
-    "publisher_name": {
-      "description": "Nom de l'éditeur (ex: Electronic Arts, Ubisoft).",
-      "tags": ["PII.None", "Tier.Gold"],
-      "glossaryTerm": "publisher_name"
+    "publisher": {
+      "description": "Nom de l'éditeur du jeu (ex: Electronic Arts, Ubisoft).",
+      "tags": ["PII.None", "Tier.Gold"]
     }
   }
 }
