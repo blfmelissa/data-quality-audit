@@ -23,6 +23,8 @@ great_expectations/uncommitted/
 
 # Data (too large for GitHub >100MB)
 data/Bronze/*.xlsx
+data/Silver/*
+data/Gold/*
 
 # Docker
 logs/
