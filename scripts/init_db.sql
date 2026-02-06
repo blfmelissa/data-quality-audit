@@ -1,3 +1,6 @@
+-- Base de données Airflow
+CREATE DATABASE airflow_db;
+
 -- Schema pour les données brutes Steam (Bronze)
 
 CREATE TABLE IF NOT EXISTS games_brut (
