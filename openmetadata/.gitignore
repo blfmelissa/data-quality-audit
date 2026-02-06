@@ -1,8 +1,8 @@
 # OpenMetadata
-# .env est committé volontairement pour faciliter l'évaluation du projet
-# Les valeurs sont des credentials de développement local uniquement
-# NE PAS UTILISER EN PRODUCTION !
+# .env généré automatiquement - ne pas committer en production
+.env
 
+# Clés privées
 conf/private_key.der
 conf/public_key.der
 
@@ -14,3 +14,14 @@ dags/__pycache__/
 # Ingestion logs
 ingestion/logs/
 ingestion/__pycache__/
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Jupyter
+.ipynb_checkpoints
+
+# IDE
+.vscode/
+.idea/
