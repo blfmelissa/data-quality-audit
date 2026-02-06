@@ -1,40 +1,40 @@
 parent,name*,displayName,description,synonyms,relatedTerms,references,tags,reviewers,owner,status
-,app_id,Application ID,"Identifiant unique attribué par Steam à chaque jeu. Clé primaire du dataset permettant de référencer un jeu de manière univoque.","ID;game_id;steam_id",,,"PII.None;Tier.Gold",,,Approved
-,name,Game Name,"Nom officiel du jeu tel que publié sur Steam. Peut contenir des caractères spéciaux et être dans différentes langues.","title;game_title;nom",,,"PII.None;Tier.Gold",,,Approved
-,release_date,Release Date,"Date de sortie officielle du jeu sur Steam au format YYYY-MM-DD. Permet d'analyser les tendances temporelles.","launch_date;date_sortie",,,"PII.None;Tier.Gold",,,Approved
-,release_year,Release Year,"Année de sortie extraite de release_date. Dimension temporelle clé pour les analyses de tendances.","year;année",,,"PII.None;Tier.Gold",,,Approved
-,is_legacy,Legacy Game,"Indicateur booléen identifiant les jeux sortis avant 2015. Utile pour filtrer les jeux anciens.","old_game;retro",,,"PII.None;Tier.Gold",,,Approved
-,price,Price,"Prix de vente actuel du jeu en USD. Valeur 0 = jeu gratuit (free-to-play).","cost;prix;amount",,,"PII.None;Tier.Gold;Sensitive.Financial",,,Approved
-,discount,Discount Percentage,"Pourcentage de réduction appliqué au prix (0-100).","reduction;promo;sale",,,"PII.None;Tier.Gold;Sensitive.Financial",,,Approved
-,dlc_count,DLC Count,"Nombre de contenus téléchargeables (DLC) disponibles pour le jeu.","addon_count;extension_count",,,"PII.None;Tier.Gold",,,Approved
-,price_outlier,Price Outlier,"Flag identifiant les jeux avec des prix anormalement élevés ou bas.","anomaly;aberrant",,,"PII.None;Tier.Gold;Other.DataQuality",,,Approved
-,estimated_owners,Owners Range,"Fourchette d'estimation du nombre de propriétaires au format texte.","ownership_range;players_range",,,"PII.None;Tier.Gold",,,Approved
-,owners_estimate,Owners Estimate,"Estimation médiane du nombre de propriétaires calculée comme (owners_min + owners_max) / 2.","player_count;install_base",,,"PII.None;Tier.Gold;Other.KPI",,,Approved
-,owners_min,Minimum Owners,"Borne inférieure de l'estimation du nombre de propriétaires.","min_players",,,"PII.None;Tier.Gold",,,Approved
-,owners_max,Maximum Owners,"Borne supérieure de l'estimation du nombre de propriétaires.","max_players",,,"PII.None;Tier.Gold",,,Approved
-,peak_ccu,Peak Concurrent Users,"Pic de joueurs simultanés enregistré sur Steam. Indicateur de popularité.","concurrent_players;peak_players",,,"PII.None;Tier.Gold;Other.KPI",,,Approved
-,required_age,Required Age,"Âge minimum requis selon PEGI/ESRB (0, 12, 16, 18).","age_rating;PEGI;ESRB",,,"PII.None;Tier.Gold;Sensitive.Compliance",,,Approved
-,windows,Windows Support,"Indicateur booléen de compatibilité Windows. True = jeu jouable sur Windows.","win_support;windows_compatible",,,"PII.None;Tier.Gold",,,Approved
-,mac,Mac Support,"Indicateur booléen de compatibilité macOS. True = jeu jouable sur Mac.","macos;osx_support",,,"PII.None;Tier.Gold",,,Approved
-,linux,Linux Support,"Indicateur booléen de compatibilité Linux. True = jeu jouable sur Linux.","unix_support;linux_compatible",,,"PII.None;Tier.Gold",,,Approved
-,metacritic_score,Metacritic Score,"Note agrégée 0-100 de critiques professionnelles.","critic_score;meta_score",,,"PII.None;Tier.Gold;Other.KPI",,,Approved
-,user_score,User Score,"Score utilisateur Steam (0-100). Distinct du review_score.","player_rating;community_score",,,"PII.None;Tier.Gold;Other.KPI",,,Approved
-,positive,Positive Reviews,"Nombre d'avis positifs (thumbs up).","thumbs_up;upvotes;good_reviews",,,"PII.None;Tier.Gold;Other.KPI",,,Approved
-,negative,Negative Reviews,"Nombre d'avis négatifs (thumbs down).","thumbs_down;downvotes;bad_reviews",,,"PII.None;Tier.Gold;Other.KPI",,,Approved
-,total_reviews,Total Reviews,"Somme positive + negative. Indicateur du niveau d'engagement.","review_count;total_ratings",,,"PII.None;Tier.Gold;Other.KPI",,,Approved
-,review_score,Review Score,"Pourcentage de reviews positives = (positive / total) x 100.","rating_percentage;approval_rate",,,"PII.None;Tier.Gold;Other.KPI",,,Approved
-,average_playtime_forever,Average Playtime Total,"Temps de jeu moyen total en minutes depuis l'achat du jeu.","avg_playtime;mean_playtime",,,"PII.None;Tier.Gold;Other.KPI",,,Approved
-,average_playtime_two_weeks,Average Playtime 2 Weeks,"Temps de jeu moyen des 2 dernières semaines.","recent_playtime;avg_playtime_2w",,,"PII.None;Tier.Gold;Other.KPI",,,Approved
-,median_playtime_forever,Median Playtime Total,"Temps de jeu médian total en minutes.","median_playtime",,,"PII.None;Tier.Gold;Other.KPI",,,Approved
-,median_playtime_two_weeks,Median Playtime 2 Weeks,"Temps de jeu médian des 2 dernières semaines.","median_playtime_2w",,,"PII.None;Tier.Gold;Other.KPI",,,Approved
-,tag_count,Tag Count,"Nombre de tags Steam associés au jeu.","number_tags",,,"PII.None;Tier.Gold",,,Approved
-,genre_count,Genre Count,"Nombre de genres assignés au jeu.","number_genres",,,"PII.None;Tier.Gold",,,Approved
-,has_singleplayer,Singleplayer Flag,"Booléen indiquant la présence d'un mode solo.","single_player;solo_mode",,,"PII.None;Tier.Gold",,,Approved
-,has_indie,Indie Flag,"Booléen identifiant les jeux indépendants.","independent;indie_game",,,"PII.None;Tier.Gold",,,Approved
-,has_rpg,RPG Flag,"Booléen identifiant les jeux de rôle (RPG).","role_playing_game;jdr",,,"PII.None;Tier.Gold",,,Approved
-,has_action,Action Flag,"Booléen identifiant les jeux d'action.","action_game",,,"PII.None;Tier.Gold",,,Approved
-,has_strategy,Strategy Flag,"Booléen identifiant les jeux de stratégie.","strategy_game;tactical",,,"PII.None;Tier.Gold",,,Approved
-,has_simulation,Simulation Flag,"Booléen identifiant les jeux de simulation.","sim_game;simulator",,,"PII.None;Tier.Gold",,,Approved
-,primary_genre,Primary Genre,"Genre principal du jeu (1er de la liste).","main_genre;first_genre",,,"PII.None;Tier.Gold",,,Approved
-,primary_tag,Primary Tag,"Tag principal du jeu (1er de la liste).","main_tag;first_tag",,,"PII.None;Tier.Gold",,,Approved
-,name_clean,Clean Name,"Nom du jeu nettoyé sans caractères spéciaux. Utilisé pour matching.","normalized_name;clean_title",,,"PII.None;Tier.Gold;Other.DataQuality",,,Approved
+,app_id,Application ID,"Identifiant unique attribué par Steam à chaque jeu. Clé primaire du dataset. Exemple : 730 (Counter-Strike 2), 570 (Dota 2), 440 (Team Fortress 2).","ID;game_id;steam_id",,,"PII.None;Tier.Gold",,,Approved
+,name,Game Name,"Nom officiel du jeu tel que publié sur Steam. Exemple : 'Counter-Strike 2', 'The Witcher 3: Wild Hunt', 'Stardew Valley'.","title;game_title;nom",,,"PII.None;Tier.Gold",,,Approved
+,release_date,Release Date,"Date de sortie officielle du jeu sur Steam au format YYYY-MM-DD. Exemple : 2015-05-18 (The Witcher 3), 2023-09-27 (Counter-Strike 2).","launch_date;date_sortie",,,"PII.None;Tier.Gold",,,Approved
+,release_year,Release Year,"Année de sortie extraite de release_date. Dimension temporelle clé pour les analyses de tendances. Exemple : 2015, 2020, 2023.","year;année",,,"PII.None;Tier.Gold",,,Approved
+,is_legacy,Legacy Game,"Indicateur booléen identifiant les jeux sortis avant 2015. Exemple : True pour Team Fortress 2 (2007), False pour Baldur's Gate 3 (2023).","old_game;retro",,,"PII.None;Tier.Gold",,,Approved
+,price,Price,"Prix de vente actuel du jeu en USD. Valeur 0 = jeu gratuit (free-to-play). Exemple : 0.00 (Dota 2), 29.99 (Stardew Valley), 59.99 (Cyberpunk 2077).","cost;prix;amount",,,"PII.None;Tier.Gold;Sensitive.Financial",,,Approved
+,discount,Discount Percentage,"Pourcentage de réduction appliqué au prix (0-100). Exemple : 0 (pas de promo), 50 (soldes -50%), 75 (soldes Steam -75%).","reduction;promo;sale",,,"PII.None;Tier.Gold;Sensitive.Financial",,,Approved
+,dlc_count,DLC Count,"Nombre de contenus téléchargeables (DLC) disponibles pour le jeu. Exemple : 0 (jeu sans DLC), 15 (The Sims 4), 40+ (Europa Universalis IV).","addon_count;extension_count",,,"PII.None;Tier.Gold",,,Approved
+,price_outlier,Price Outlier,"Flag identifiant les jeux avec des prix anormalement élevés ou bas détectés par analyse statistique (z-score). Exemple : True pour un jeu à 999.99 USD.","anomaly;aberrant",,,"PII.None;Tier.Gold;Other.DataQuality",,,Approved
+,estimated_owners,Owners Range,"Fourchette d'estimation du nombre de propriétaires au format texte. Exemple : '0 - 20000', '200000 - 500000', '50000000 - 100000000'.","ownership_range;players_range",,,"PII.None;Tier.Gold",,,Approved
+,owners_estimate,Owners Estimate,"Estimation médiane du nombre de propriétaires = (owners_min + owners_max) / 2. Exemple : 350000 pour la fourchette '200000 - 500000'.","player_count;install_base",,,"PII.None;Tier.Gold;Other.KPI",,,Approved
+,owners_min,Minimum Owners,"Borne inférieure de l'estimation du nombre de propriétaires. Exemple : 200000 pour la fourchette '200000 - 500000'.","min_players",,,"PII.None;Tier.Gold",,,Approved
+,owners_max,Maximum Owners,"Borne supérieure de l'estimation du nombre de propriétaires. Exemple : 500000 pour la fourchette '200000 - 500000'.","max_players",,,"PII.None;Tier.Gold",,,Approved
+,peak_ccu,Peak Concurrent Users,"Pic de joueurs simultanés enregistré sur Steam. Exemple : 1800000+ (Counter-Strike 2), 800000+ (Cyberpunk 2077 au lancement).","concurrent_players;peak_players",,,"PII.None;Tier.Gold;Other.KPI",,,Approved
+,required_age,Required Age,"Âge minimum requis selon PEGI/ESRB. Exemple : 0 (tout public), 12 (Fortnite), 16 (The Witcher 3), 18 (GTA V).","age_rating;PEGI;ESRB",,,"PII.None;Tier.Gold;Sensitive.Compliance",,,Approved
+,windows,Windows Support,"Indicateur booléen de compatibilité Windows. Exemple : True pour la quasi-totalité des jeux Steam (~97%).","win_support;windows_compatible",,,"PII.None;Tier.Gold",,,Approved
+,mac,Mac Support,"Indicateur booléen de compatibilité macOS. Exemple : True pour environ 25% du catalogue Steam (Stardew Valley, Civilization VI).","macos;osx_support",,,"PII.None;Tier.Gold",,,Approved
+,linux,Linux Support,"Indicateur booléen de compatibilité Linux. Exemple : True pour environ 20% du catalogue Steam (Dota 2, CS2 via Proton).","unix_support;linux_compatible",,,"PII.None;Tier.Gold",,,Approved
+,metacritic_score,Metacritic Score,"Note agrégée 0-100 de critiques professionnelles. Exemple : 93 (The Witcher 3), 86 (Cyberpunk 2077), 0 (non noté).","critic_score;meta_score",,,"PII.None;Tier.Gold;Other.KPI",,,Approved
+,user_score,User Score,"Score utilisateur Steam (0-100). Distinct du review_score. Exemple : 92 (Stardew Valley), 78 (Cyberpunk 2077).","player_rating;community_score",,,"PII.None;Tier.Gold;Other.KPI",,,Approved
+,positive,Positive Reviews,"Nombre d'avis positifs (thumbs up). Exemple : 750000+ (Counter-Strike 2), 200000+ (Stardew Valley).","thumbs_up;upvotes;good_reviews",,,"PII.None;Tier.Gold;Other.KPI",,,Approved
+,negative,Negative Reviews,"Nombre d'avis négatifs (thumbs down). Exemple : 350000+ (Counter-Strike 2), 5000 (Stardew Valley).","thumbs_down;downvotes;bad_reviews",,,"PII.None;Tier.Gold;Other.KPI",,,Approved
+,total_reviews,Total Reviews,"Somme positive + negative. Indicateur du niveau d'engagement. Exemple : 1100000 (Counter-Strike 2), 205000 (Stardew Valley).","review_count;total_ratings",,,"PII.None;Tier.Gold;Other.KPI",,,Approved
+,review_score,Review Score,"Pourcentage de reviews positives = (positive / total) x 100. Exemple : 97% (Stardew Valley), 68% (Counter-Strike 2).","rating_percentage;approval_rate",,,"PII.None;Tier.Gold;Other.KPI",,,Approved
+,average_playtime_forever,Average Playtime Total,"Temps de jeu moyen total en minutes depuis l'achat. Exemple : 6000 min (~100h pour un RPG), 300 min (~5h pour un indie court).","avg_playtime;mean_playtime",,,"PII.None;Tier.Gold;Other.KPI",,,Approved
+,average_playtime_two_weeks,Average Playtime 2 Weeks,"Temps de jeu moyen des 2 dernières semaines en minutes. Exemple : 120 min (jeu actif), 0 min (jeu abandonné).","recent_playtime;avg_playtime_2w",,,"PII.None;Tier.Gold;Other.KPI",,,Approved
+,median_playtime_forever,Median Playtime Total,"Temps de jeu médian total en minutes. Moins sensible aux valeurs extrêmes que la moyenne. Exemple : 180 min vs moyenne de 6000 min pour un RPG.","median_playtime",,,"PII.None;Tier.Gold;Other.KPI",,,Approved
+,median_playtime_two_weeks,Median Playtime 2 Weeks,"Temps de jeu médian des 2 dernières semaines. Exemple : 0 min pour la plupart des jeux (majorité inactive), 60 min pour un jeu populaire.","median_playtime_2w",,,"PII.None;Tier.Gold;Other.KPI",,,Approved
+,tag_count,Tag Count,"Nombre de tags Steam associés au jeu. Exemple : 20+ (jeu populaire multi-genre), 3-5 (jeu niche).","number_tags",,,"PII.None;Tier.Gold",,,Approved
+,genre_count,Genre Count,"Nombre de genres assignés au jeu. Exemple : 1 (jeu mono-genre comme Puzzle), 4+ (Action-RPG-Adventure-Open World).","number_genres",,,"PII.None;Tier.Gold",,,Approved
+,has_singleplayer,Singleplayer Flag,"Booléen indiquant la présence d'un mode solo. Exemple : True (The Witcher 3), False (Fall Guys).","single_player;solo_mode",,,"PII.None;Tier.Gold",,,Approved
+,has_indie,Indie Flag,"Booléen identifiant les jeux indépendants. Exemple : True (Hollow Knight, Celeste), False (FIFA, Call of Duty).","independent;indie_game",,,"PII.None;Tier.Gold",,,Approved
+,has_rpg,RPG Flag,"Booléen identifiant les jeux de rôle. Exemple : True (Baldur's Gate 3, Skyrim), False (Counter-Strike 2).","role_playing_game;jdr",,,"PII.None;Tier.Gold",,,Approved
+,has_action,Action Flag,"Booléen identifiant les jeux d'action. Exemple : True (Doom Eternal, Elden Ring), False (Civilization VI).","action_game",,,"PII.None;Tier.Gold",,,Approved
+,has_strategy,Strategy Flag,"Booléen identifiant les jeux de stratégie. Exemple : True (Civilization VI, Total War), False (Stardew Valley).","strategy_game;tactical",,,"PII.None;Tier.Gold",,,Approved
+,has_simulation,Simulation Flag,"Booléen identifiant les jeux de simulation. Exemple : True (Cities: Skylines, Euro Truck Simulator 2), False (Doom).","sim_game;simulator",,,"PII.None;Tier.Gold",,,Approved
+,primary_genre,Primary Genre,"Genre principal du jeu (1er de la liste des genres). Exemple : 'Action' (Elden Ring), 'RPG' (Baldur's Gate 3), 'Indie' (Celeste).","main_genre;first_genre",,,"PII.None;Tier.Gold",,,Approved
+,primary_tag,Primary Tag,"Tag principal du jeu (1er de la liste des tags). Exemple : 'FPS' (Counter-Strike 2), 'Open World' (Skyrim), 'Rogue-like' (Hades).","main_tag;first_tag",,,"PII.None;Tier.Gold",,,Approved
+,name_clean,Clean Name,"Nom du jeu nettoyé sans caractères spéciaux, en minuscules. Utilisé pour le matching. Exemple : 'the witcher 3 wild hunt' au lieu de 'The Witcher 3: Wild Hunt™'.","normalized_name;clean_title",,,"PII.None;Tier.Gold;Other.DataQuality",,,Approved

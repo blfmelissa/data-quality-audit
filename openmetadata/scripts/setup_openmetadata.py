@@ -76,31 +76,31 @@ CLASSIFICATIONS = {
 
 TABLE_DESCRIPTIONS = {
     "games_brut": {
-        "description": "Données brutes extraites de l'API Steam sans transformation. Contient l'ensemble des informations sur les jeux Steam telles qu'ingérées initialement : métadonnées, prix, statistiques de joueurs, et avis. Sert de source primaire pour le pipeline de transformation. Non nettoyée, peut contenir des valeurs nulles et des incohérences.",
+        "description": "Données brutes extraites de l'API Steam sans transformation. Contient l'ensemble des informations sur les jeux Steam telles qu'ingérées initialement : métadonnées, prix, statistiques de joueurs, et avis. Sert de source primaire pour le pipeline de transformation. Non nettoyée, peut contenir des valeurs nulles et des incohérences.\n\n**Propriétaire** : Melissa, Zyad & Jeremy (Data Quality Team)\n**Fréquence de mise à jour** : Ponctuelle (chargement initial depuis l'API Steam)\n**Critères de qualité** : Aucun appliqué (données brutes). Profilé par SweetViz et Evidently en aval.",
         "tier": "Tier.Bronze"
     },
     "games_clean": {
-        "description": "Données nettoyées et validées issues de games_brut. Transformations appliquées : normalisation des types, gestion des valeurs manquantes, suppression des doublons, standardisation des formats de dates et prix. Prête pour l'analyse exploratoire et les transformations métier.",
+        "description": "Données nettoyées et validées issues de games_brut. Transformations appliquées : normalisation des types, gestion des valeurs manquantes, suppression des doublons, standardisation des formats de dates et prix. Prête pour l'analyse exploratoire et les transformations métier.\n\n**Propriétaire** : Melissa, Zyad & Jeremy (Data Quality Team)\n**Fréquence de mise à jour** : Déclenchée après chaque ingestion de games_brut\n**Critères de qualité** : Pas de doublons sur app_id, types conformes, valeurs nulles traitées. Validé par Great Expectations.",
         "tier": "Tier.Silver"
     },
     "games_gold": {
-        "description": "Table principale d'analyse contenant les métriques enrichies et calculées pour chaque jeu Steam. Inclut les KPIs business (estimation propriétaires, scores agrégés, temps de jeu), flags comportementaux (is_legacy, price_outlier), et dimensions pré-calculées (primary_genre, primary_tag). Optimisée pour les dashboards et rapports business.",
+        "description": "Table principale d'analyse contenant les métriques enrichies et calculées pour chaque jeu Steam. Inclut les KPIs business (estimation propriétaires, scores agrégés, temps de jeu), flags comportementaux (is_legacy, price_outlier), et dimensions pré-calculées (primary_genre, primary_tag). Optimisée pour les dashboards et rapports business.\n\n**Propriétaire** : Melissa, Zyad & Jeremy (Data Quality Team)\n**Fréquence de mise à jour** : Déclenchée après chaque mise à jour de games_clean\n**Critères de qualité** : Unicité app_id, complétude > 95%, outliers détectés (price_outlier), KPIs validés par Great Expectations.",
         "tier": "Tier.Gold"
     },
     "game_tags": {
-        "description": "Table de dimension contenant les tags Steam associés à chaque jeu. Permet l'analyse par catégorie comportementale (Singleplayer, Multiplayer, Indie, Early Access, etc.). Relation many-to-many avec games_gold via app_id. Utilisée pour le filtrage et la segmentation des jeux par caractéristiques.",
+        "description": "Table de dimension contenant les tags Steam associés à chaque jeu. Permet l'analyse par catégorie comportementale (Singleplayer, Multiplayer, Indie, Early Access, etc.). Relation many-to-many avec games_gold via app_id. Utilisée pour le filtrage et la segmentation des jeux par caractéristiques.\n\n**Propriétaire** : Melissa, Zyad & Jeremy (Data Quality Team)\n**Fréquence de mise à jour** : Synchronisée avec games_gold\n**Critères de qualité** : Intégrité référentielle avec games_gold (app_id), pas de tags vides.",
         "tier": "Tier.Gold"
     },
     "game_genres": {
-        "description": "Table de dimension listant les genres officiels Steam de chaque jeu (Action, RPG, Strategy, Simulation, etc.). Relation many-to-many avec games_gold via app_id. Permet l'analyse comparative par genre et l'identification des tendances de marché par catégorie de jeu.",
+        "description": "Table de dimension listant les genres officiels Steam de chaque jeu (Action, RPG, Strategy, Simulation, etc.). Relation many-to-many avec games_gold via app_id. Permet l'analyse comparative par genre et l'identification des tendances de marché par catégorie de jeu.\n\n**Propriétaire** : Melissa, Zyad & Jeremy (Data Quality Team)\n**Fréquence de mise à jour** : Synchronisée avec games_gold\n**Critères de qualité** : Intégrité référentielle avec games_gold (app_id), pas de genres vides.",
         "tier": "Tier.Gold"
     },
     "game_developers": {
-        "description": "Table de dimension répertoriant les studios de développement responsables de chaque jeu. Relation many-to-many avec games_gold via app_id. Permet l'analyse de portefeuille par développeur, identification des studios prolifiques, et études de corrélation entre développeur et succès commercial.",
+        "description": "Table de dimension répertoriant les studios de développement responsables de chaque jeu. Relation many-to-many avec games_gold via app_id. Permet l'analyse de portefeuille par développeur, identification des studios prolifiques, et études de corrélation entre développeur et succès commercial.\n\n**Propriétaire** : Melissa, Zyad & Jeremy (Data Quality Team)\n**Fréquence de mise à jour** : Synchronisée avec games_gold\n**Critères de qualité** : Intégrité référentielle avec games_gold (app_id), noms de développeurs non vides.",
         "tier": "Tier.Gold"
     },
     "game_publishers": {
-        "description": "Table de dimension contenant les éditeurs (publishers) de chaque jeu Steam. Relation many-to-many avec games_gold via app_id. Utilisée pour analyser les stratégies d'édition, parts de marché des éditeurs, et corrélations entre éditeur et performance commerciale ou critique.",
+        "description": "Table de dimension contenant les éditeurs (publishers) de chaque jeu Steam. Relation many-to-many avec games_gold via app_id. Utilisée pour analyser les stratégies d'édition, parts de marché des éditeurs, et corrélations entre éditeur et performance commerciale ou critique.\n\n**Propriétaire** : Melissa, Zyad & Jeremy (Data Quality Team)\n**Fréquence de mise à jour** : Synchronisée avec games_gold\n**Critères de qualité** : Intégrité référentielle avec games_gold (app_id), noms d'éditeurs non vides.",
         "tier": "Tier.Gold"
     }
 }
@@ -181,11 +181,11 @@ def api_call(method, endpoint, data=None, ignore_404=False):
 def create_classifications():
     """Crée toutes les classifications et leurs tags"""
     print("\n" + "="*70)
-    print("🏷️  ÉTAPE 1 : Création des Classifications et Tags")
+    print(" ÉTAPE 1 : Création des Classifications et Tags")
     print("="*70)
     
     for class_name, class_data in CLASSIFICATIONS.items():
-        print(f"\n📁 Classification : {class_name}")
+        print(f"\nClassification : {class_name}")
         
         # Vérifier si la classification existe
         success, existing = api_call("GET", f"v1/classifications/name/{class_name}", ignore_404=True)
@@ -228,11 +228,11 @@ def create_classifications():
 def update_table_descriptions():
     """Met à jour les descriptions et tags des tables"""
     print("\n" + "="*70)
-    print("📝 ÉTAPE 2 : Mise à jour des descriptions des tables")
+    print("ETAPE 2 : Mise à jour des descriptions des tables")
     print("="*70)
     
     for table_name, table_info in TABLE_DESCRIPTIONS.items():
-        print(f"\n📊 Table : {table_name}")
+        print(f"\n Table : {table_name}")
         
         fqn = f"games_database.games_db.public.{table_name}"
         
@@ -281,7 +281,7 @@ COLUMNS_METADATA_FILE = Path(__file__).parent.parent / "conf" / "columns_metadat
 def update_column_metadata():
     """Met à jour descriptions, tags et termes de glossaire pour chaque colonne"""
     print("\n" + "="*70)
-    print("📋 ÉTAPE 4 : Mise à jour des métadonnées des colonnes")
+    print(" ETAPE 4 : Mise à jour des métadonnées des colonnes")
     print("="*70)
     
     # Charger la configuration des colonnes
@@ -293,7 +293,7 @@ def update_column_metadata():
         columns_config = json.load(f)
     
     for table_name, columns in columns_config.items():
-        print(f"\n📊 Table : {table_name}")
+        print(f"\n Table : {table_name}")
         
         fqn = f"games_database.games_db.public.{table_name}"
         
@@ -388,7 +388,7 @@ def update_column_metadata():
                 else:
                     print(f"   ❌ {col_name}: Erreur - {str(result)[:100]}")
         
-        print(f"   📊 {updated_count}/{len(columns)} colonnes mises à jour")
+        print(f"   {updated_count}/{len(columns)} colonnes mises à jour")
 
 # ============================================================================
 # 3. CRÉER LE GLOSSAIRE
@@ -397,7 +397,7 @@ def update_column_metadata():
 def create_glossary():
     """Crée le glossaire à partir du CSV"""
     print("\n" + "="*70)
-    print("📚 ÉTAPE 3 : Création du Glossaire")
+    print(" ETAPE 3 : Création du Glossaire")
     print("="*70)
     
     # Vérifier si le fichier existe
@@ -407,7 +407,7 @@ def create_glossary():
     
     # Créer le glossaire principal
     glossary_name = "GamingAnalytics"
-    print(f"\n📖 Glossaire : {glossary_name}")
+    print(f"\n Glossaire : {glossary_name}")
     
     glossary_payload = {
         "name": glossary_name,
@@ -438,7 +438,7 @@ def create_glossary():
     time.sleep(1)
     
     # Lire le CSV et créer les termes
-    print(f"\n   📄 Import des termes depuis {GLOSSARY_CSV.name}")
+    print(f"\n   Import des termes depuis {GLOSSARY_CSV.name}")
     
     with open(GLOSSARY_CSV, 'r', encoding='utf-8') as f:
         reader = csv.DictReader(f)
@@ -483,18 +483,108 @@ def create_glossary():
                 else:
                     print(f"      ⚠️  Erreur pour {term_name}: {result[:100]}")
         
-        print(f"\n   📊 Résumé glossaire:")
+        print(f"\n   �� Résumé glossaire:")
         print(f"      ✅ Créés : {terms_created}")
         print(f"      ℹ️  Ignorés (existants) : {terms_skipped}")
 
 # ============================================================================
-# 5. CRÉER LE LINEAGE
+# 5. CRÉER L'ÉQUIPE ET ASSIGNER LES PROPRIÉTAIRES
+# ============================================================================
+
+TEAM_MEMBERS = [
+    {"name": "melissa", "displayName": "Melissa", "email": "melissa@data-quality-audit.org"},
+    {"name": "zyad", "displayName": "Zyad", "email": "zyad@data-quality-audit.org"},
+    {"name": "jeremy", "displayName": "Jeremy", "email": "jeremy@data-quality-audit.org"},
+]
+
+TEAM_NAME = "data-quality-team"
+
+def assign_owners():
+    """Crée les utilisateurs, l'équipe, et assigne l'équipe comme propriétaire"""
+    print("\n" + "="*70)
+    print("ETAPE 6 : Création de l'équipe et attribution des propriétaires")
+    print("="*70)
+
+    # Créer les utilisateurs
+    user_ids = []
+    for member in TEAM_MEMBERS:
+        success, existing = api_call("GET", f"v1/users/name/{member['name']}", ignore_404=True)
+        if existing:
+            print(f"   ℹ️  Utilisateur existe déjà : {member['displayName']}")
+            user_ids.append(existing.get("id"))
+        else:
+            user_payload = {
+                "name": member["name"],
+                "displayName": member["displayName"],
+                "email": member["email"],
+            }
+            success, result = api_call("POST", "v1/users", user_payload)
+            if success:
+                print(f"   ✅ Utilisateur créé : {member['displayName']}")
+                user_ids.append(result.get("id"))
+            else:
+                print(f"   ⚠️  Erreur utilisateur {member['name']} : {str(result)[:100]}")
+
+    # Créer l'équipe
+    success, existing_team = api_call("GET", f"v1/teams/name/{TEAM_NAME}", ignore_404=True)
+    if existing_team:
+        print(f"   ℹ️  Équipe existe déjà : {TEAM_NAME}")
+        team_id = existing_team.get("id")
+    else:
+        team_payload = {
+            "name": TEAM_NAME,
+            "displayName": "Data Quality Team — Melissa, Zyad & Jeremy",
+            "description": "Équipe responsable du projet Data Quality Audit sur le dataset Steam Games.",
+            "teamType": "Group",
+            "users": [uid for uid in user_ids if uid],
+        }
+        success, result = api_call("POST", "v1/teams", team_payload)
+        if success:
+            print(f"   ✅ Équipe créée : {TEAM_NAME}")
+            team_id = result.get("id")
+        else:
+            print(f"   ⚠️  Erreur équipe : {str(result)[:150]}")
+            team_id = None
+
+    if not team_id:
+        print("   ❌ Impossible d'assigner les propriétaires (équipe non créée)")
+        return
+
+    # Assigner l'équipe comme propriétaire de chaque table
+    for table_name in TABLE_DESCRIPTIONS:
+        fqn = f"games_database.games_db.public.{table_name}"
+        success, table_data = api_call("GET", f"v1/tables/name/{fqn}")
+
+        if not success:
+            print(f"   ❌ Table non trouvée : {fqn}")
+            continue
+
+        table_id = table_data.get("id")
+        patch_payload = [
+            {
+                "op": "add",
+                "path": "/owner",
+                "value": {
+                    "id": team_id,
+                    "type": "team"
+                }
+            }
+        ]
+
+        success, result = api_call("PATCH", f"v1/tables/{table_id}", patch_payload)
+        if success:
+            print(f"   ✅ {table_name} : propriétaire = {TEAM_NAME}")
+        else:
+            print(f"   ⚠️  {table_name} : {str(result)[:100]}")
+
+# ============================================================================
+# 6. CRÉER LE LINEAGE
 # ============================================================================
 
 def create_lineage():
     """Crée les relations de lineage entre tables"""
     print("\n" + "="*70)
-    print("🔗 ÉTAPE 5 : Création du Lineage")
+    print("�� ÉTAPE 5 : Création du Lineage")
     print("="*70)
     
     for link in LINEAGE:
@@ -541,10 +631,10 @@ def create_lineage():
 
 def main():
     print("\n" + "="*70)
-    print("🚀 AUTOMATISATION COMPLÈTE OPENMETADATA")
+    print("AUTOMATISATION COMPLETE OPENMETADATA")
     print("="*70)
-    print(f"📍 URL : {OPENMETADATA_URL}")
-    print(f"🔑 Token : {JWT_TOKEN[:50]}...")
+    print(f"URL : {OPENMETADATA_URL}")
+    print(f"Token : {JWT_TOKEN[:50]}...")
     
     try:
         # Étape 1 : Classifications et Tags
@@ -565,18 +655,23 @@ def main():
         
         # Étape 5 : Lineage
         create_lineage()
+        time.sleep(2)
+        
+        # Étape 6 : Propriétaires
+        assign_owners()
         
         print("\n" + "="*70)
         print("✅ CONFIGURATION OPENMETADATA TERMINÉE !")
         print("="*70)
-        print("\n🎯 Actions complétées :")
+        print("\nActions complétées :")
         print("   ✅ 4 Classifications créées (PII, Tier, Sensitive, Other)")
         print("   ✅ 8 Tags créés")
-        print("   ✅ 7 Tables documentées avec descriptions et tags")
+        print("   ✅ 7 Tables documentées (descriptions, fréquence, critères qualité)")
+        print("   ✅ 7 Propriétaires assignés")
         print("   ✅ ~100 Colonnes enrichies avec descriptions, tags et termes")
         print("   ✅ ~40 Termes de glossaire importés")
         print("   ✅ 6 Relations de lineage créées")
-        print("\n🌐 Accède à OpenMetadata : http://localhost:8585")
+        print("\nAccède à OpenMetadata : http://localhost:8585")
         
     except Exception as e:
         print(f"\n❌ ERREUR CRITIQUE : {e}")
