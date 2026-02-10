@@ -16,11 +16,17 @@ from evidently.legacy.metric_preset import DataQualityPreset
 import sweetviz as sv
 from datetime import datetime
 
-# Création du dossier reports (si nécessaire )
-os.makedirs("reports", exist_ok=True)
+# Déterminer le répertoire de base (parent du dossier scripts)
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.dirname(SCRIPT_DIR)
+REPORTS_DIR = os.path.join(BASE_DIR, "reports")
+
+# Création du dossier reports (si nécessaire)
+os.makedirs(REPORTS_DIR, exist_ok=True)
+print(f"Répertoire des rapports : {REPORTS_DIR}")
 
 # Charger la configuration depuis .env
-load_dotenv()  
+load_dotenv(os.path.join(BASE_DIR, ".env"))  
 
 DB_HOST = os.getenv('DB_HOST', 'host.docker.internal')
 DB_PORT = os.getenv('DB_PORT', '5432')
@@ -48,9 +54,9 @@ if df is not None:
         report.run(current_data=df, reference_data=None)
         
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        evidently_file = f"reports/evidently_data_quality_report_{timestamp}.html"
+        evidently_file = os.path.join(REPORTS_DIR, f"evidently_data_quality_report_{timestamp}.html")
         report.save_html(evidently_file)
-        print(f"Rapport Evidently sauvegardé : {evidently_file}")
+        print(f"✅ Rapport Evidently sauvegardé : {evidently_file}")
     except Exception as e:
         print(f"Erreur Evidently : {e}")
 else:
@@ -62,9 +68,9 @@ if df is not None:
         print("Génération du rapport Sweetviz...")
         sv_report = sv.analyze(df)
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        sweetviz_file = f"reports/sweetviz_report_{timestamp}.html"
+        sweetviz_file = os.path.join(REPORTS_DIR, f"sweetviz_report_{timestamp}.html")
         sv_report.show_html(sweetviz_file, open_browser=False)
-        print(f"Rapport Sweetviz sauvegardé : {sweetviz_file}")
+        print(f"✅ Rapport Sweetviz sauvegardé : {sweetviz_file}")
     except Exception as e:
         print(f"Erreur Sweetviz : {e}")
 else:

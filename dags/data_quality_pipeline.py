@@ -66,6 +66,14 @@ with DAG(
         ''',
     )
 
+    generate_reports = BashOperator(
+        task_id='generate_reports',
+        bash_command='''
+        echo " Génération des rapports Evidently + SweetViz..."
+        docker exec dq_jupyter python /home/jovyan/work/scripts/generate_reports.py
+        ''',
+    )
+
     run_notebook_01 = BashOperator(
         task_id='run_notebook_01_analyse_manuelle',
         bash_command='''
@@ -99,14 +107,6 @@ with DAG(
         ''',
     )
 
-    generate_reports = BashOperator(
-        task_id='generate_reports',
-        bash_command='''
-        echo " Génération des rapports Evidently + SweetViz..."
-        docker exec dq_jupyter python /home/jovyan/work/scripts/generate_reports.py
-        ''',
-    )
-
     run_validation = BashOperator(
         task_id='run_validation',
         bash_command='''
@@ -115,4 +115,4 @@ with DAG(
         ''',
     )
 
-    check_docker >> setup_superset >> load_data >> run_notebook_01 >> run_notebook_02 >> run_notebook_03 >> generate_reports >> run_validation
+    check_docker >> setup_superset >> load_data >> generate_reports >> run_notebook_01 >> run_notebook_02 >> run_notebook_03 >> run_validation

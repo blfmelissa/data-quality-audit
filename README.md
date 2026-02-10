@@ -102,24 +102,59 @@ docker-compose logs -f airflow_standalone
 3. Activer le DAG `data_quality_pipeline`
 4. Cliquer sur "Trigger DAG" (▶️)
 
-Le pipeline exécute :
-- Chargement des données brutes dans PostgreSQL
-- Analyse exploratoire (notebook 01)
-- Nettoyage et transformation (notebook 02)
-- Validation Great Expectations (notebook 03)
-- Génération des rapports Evidently + SweetViz
+Le pipeline exécute dans l'ordre :
+1. **Chargement des données brutes** dans PostgreSQL (Bronze layer)
+2. **Profilage automatique** (Evidently + SweetViz) → génération des rapports dans `reports/`
+3. **Analyse exploratoire manuelle** (notebook 01)
+4. **Nettoyage et transformation** Bronze → Silver → Gold (notebook 02)
+5. **Validation Great Expectations** (notebook 03)
+6. **Validation finale** et tests de qualité
 
 ### Notebooks Jupyter
 
 Les notebooks sont disponibles dans `notebooks/` :
 
-- `01_analyse_manuelle.ipynb` - Analyse exploratoire et profiling
+- `01_analyse_manuelle.ipynb` - Analyse exploratoire et profiling manuel
 - `02_nettoyage.ipynb` - Transformation Bronze → Silver → Gold
 - `03_validation.ipynb` - Validation avec Great Expectations
 
 Pour les exécuter manuellement :
 1. Ouvrir Jupyter Lab : http://localhost:8888
 2. Naviguer vers `work/notebooks/`
+
+### Rapports de Profilage
+
+Après exécution du pipeline, les rapports sont générés dans `reports/` :
+
+- **Evidently** : Analyse de la qualité des données (drift, missing values, etc.)
+- **SweetViz** : Rapport HTML interactif de profilage exploratoire
+
+Ces rapports sont créés **automatiquement** après le chargement des données et **avant** l'analyse manuelle (notebook 01).
+
+### Data Catalog avec OpenMetadata
+
+#### Déployer OpenMetadata
+
+Un second DAG permet de déployer et configurer automatiquement OpenMetadata :
+
+1. Activer le DAG `openmetadata_deploy` dans Airflow
+2. Cliquer sur "Trigger DAG" (▶️)
+
+Le déploiement automatique :
+- Lance tous les services OpenMetadata (MySQL, Elasticsearch, Server, Ingestion)
+- Récupère automatiquement le JWT token du bot d'ingestion
+- Ingère les métadonnées depuis PostgreSQL (7 tables)
+- Crée 4 Classifications + 8 Tags (PII, Tier, Sensitive, etc.)
+- Importe 39 termes du glossaire "GamingAnalytics"
+- Crée 3 utilisateurs (Melissa, Zyad, Jeremy) et l'équipe Data Quality
+- Configure le lineage entre les tables Bronze → Silver → Gold
+
+Après déploiement, accédez à : http://localhost:8585 (admin/admin)
+
+**Navigation OpenMetadata** :
+- **Explore → Tables** : Voir les 7 tables `games_database` avec métadonnées complètes
+- **Glossary** : Consulter les termes métier (GamingAnalytics)
+- **Lineage** : Visualiser les flux de transformation des données
 
 ### Arrêter les services
 
