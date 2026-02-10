@@ -134,7 +134,7 @@ services:
     command:
       - -c
       - |
-        airflow db migrate &&
+        airflow db upgrade &&
         airflow users create --username admin --password admin --firstname admin --lastname admin --role Admin --email admin@example.com 2>/dev/null;
         exec airflow webserver --port 8080
     expose:

@@ -29,7 +29,7 @@ CONNECTOR_YAML = SCRIPT_DIR / "ingestion" / "postgres_connector.yaml"
 SETUP_SCRIPT = SCRIPT_DIR / "scripts" / "setup_openmetadata.py"
 REQUIREMENTS = SCRIPT_DIR / "requirements.txt"
 
-OM_URL = "http://localhost:8585"
+OM_URL = "http://dq_openmetadata:8585"
 OM_API = f"{OM_URL}/api"
 
 
@@ -142,23 +142,39 @@ def wait_for_container_healthy(container, timeout=180, interval=10):
 
 def get_bot_jwt_via_api():
     """Tente de recuperer le JWT via l'API de login OM."""
-    payload = json.dumps({
-        "email": "admin@open-metadata.org",
-        "password": "admin",
-    }).encode()
+    # Essayer plusieurs variantes d'email admin
+    email_variants = [
+        "admin@open-metadata.org",
+        "admin@openmetadata.org",
+        "admin",
+    ]
+    
+    access_token = None
+    for email in email_variants:
+        try:
+            payload = json.dumps({
+                "email": email,
+                "password": "admin",
+            }).encode()
 
-    req = urllib.request.Request(
-        f"{OM_API}/v1/users/login",
-        data=payload,
-        headers={"Content-Type": "application/json"},
-        method="POST",
-    )
-    with urllib.request.urlopen(req, timeout=15) as resp:
-        data = json.loads(resp.read())
-
-    access_token = data.get("accessToken")
+            req = urllib.request.Request(
+                f"{OM_API}/v1/users/login",
+                data=payload,
+                headers={"Content-Type": "application/json"},
+                method="POST",
+            )
+            with urllib.request.urlopen(req, timeout=15) as resp:
+                data = json.loads(resp.read())
+                access_token = data.get("accessToken")
+                if access_token:
+                    print(f"   Login reussi avec email: {email}")
+                    break
+        except Exception as e:
+            print(f"   Tentative login avec {email}: {e}")
+            continue
+    
     if not access_token:
-        raise RuntimeError("Pas d'accessToken dans la reponse")
+        raise RuntimeError("Pas d'accessToken dans la reponse apres toutes les tentatives")
 
     req = urllib.request.Request(
         f"{OM_API}/v1/bots/name/ingestion-bot",
@@ -176,25 +192,31 @@ def get_bot_jwt_via_api():
 
 
 def get_bot_jwt_from_db(mysql_root_pw):
-    """Fallback : lecture du JWT ingestion-bot directement depuis MySQL."""
+    """Fallback : lecture du JWT ingestion-bot directement depuis MySQL avec JSON_EXTRACT."""
+    print("   Tentative de recuperation depuis MySQL avec JSON_EXTRACT...")
+    
+    # Utiliser JSON_EXTRACT pour extraire directement le JWT
+    query = "SELECT JSON_UNQUOTE(JSON_EXTRACT(json, '$.authenticationMechanism.config.JWTToken')) FROM user_entity WHERE name='ingestion-bot';"
+    
     r = subprocess.run(
         ["docker", "exec", "-i", "openmetadata_mysql",
          "mysql", "-u", "root", f"-p{mysql_root_pw}",
-         "--database", "openmetadata_db", "-N", "-e",
-         "SELECT json FROM user_entity WHERE name='ingestion-bot';"],
+         "--database", "openmetadata_db", "-N", "-e", query],
         capture_output=True, text=True,
     )
-    if r.returncode != 0 or not r.stdout.strip():
+    
+    if r.returncode != 0:
+        print(f"   Erreur MySQL (returncode={r.returncode}): {r.stderr[:200]}")
         return None
-    try:
-        user_json = json.loads(r.stdout.strip())
-        return (
-            user_json.get("authenticationMechanism", {})
-            .get("config", {})
-            .get("JWTToken")
-        )
-    except (json.JSONDecodeError, KeyError, TypeError):
+        
+    jwt = r.stdout.strip()
+    
+    if not jwt or jwt == "NULL" or jwt == "null":
+        print("   JWT non trouve dans user_entity.authenticationMechanism.config.JWTToken")
         return None
+    
+    print(f"   JWT recupere depuis MySQL (longueur: {len(jwt)})")
+    return jwt
 
 
 def get_bot_jwt(mysql_root_pw):
@@ -203,8 +225,8 @@ def get_bot_jwt(mysql_root_pw):
         jwt = get_bot_jwt_via_api()
         if jwt:
             return jwt
-    except Exception:
-        pass
+    except Exception as e:
+        print(f"   API method failed: {e}")
 
     jwt = get_bot_jwt_from_db(mysql_root_pw)
     if jwt:
@@ -354,25 +376,61 @@ def main():
     # ── 7. Recuperation JWT + ingestion metadonnees ───────────────────
     print("\n[7/8] Ingestion des metadonnees PostgreSQL")
 
+    # Attente supplementaire pour l'API de login
+    print("   Attente supplementaire pour l'API de login (15s)...")
+    time.sleep(15)
+
     # Recuperation du token JWT
+    jwt_obtained = False
     try:
         jwt = get_bot_jwt(root_pw)
         inject_jwt(jwt)
         ok("Token JWT recupere et injecte")
+        jwt_obtained = True
     except Exception as e:
         warn(f"Impossible de recuperer le JWT automatiquement : {e}")
+        import traceback
+        print(f"   Debug: {traceback.format_exc()}")
         warn("Etape manuelle : http://localhost:8585 > Settings > Bots > ingestion-bot")
         warn("Copier le token dans .env (OPENMETADATA_JWT_TOKEN) et relancer")
+        warn("Ingestion PostgreSQL ignoree (JWT requis)")
 
-    # Ingestion via conteneur temporaire (ne depend pas du healthcheck Airflow)
-    print("   Lancement de l'ingestion des metadonnees (conteneur temporaire)...")
+    if not jwt_obtained:
+        print("\n[8/8] Configuration des metadonnees (tags, glossaire, lineage)")
+        warn("Configuration ignoree (JWT non recupere)")
+        print("\n" + "="*70)
+        print(f"{Color.YELLOW}⚠ DEPLOIEMENT PARTIEL{Color.RESET}")
+        print("="*70)
+        print(f"\n{Color.BLUE}OpenMetadata :{Color.RESET} http://localhost:8585")
+        print("Identifiants : admin / admin")
+        print("\nPour terminer le setup :")
+        print("1. Recuperer le JWT manuellement depuis l'interface")
+        print("2. Le mettre dans openmetadata/.env (OPENMETADATA_JWT_TOKEN)")
+        print("3. Relancer le DAG openmetadata_deploy")
+        return
+
+    # Copie du fichier de configuration dans le container (volume non monte correctement)
+    print("   Copie du fichier de configuration dans le container...")
+    connector_file = os.path.join(SCRIPT_DIR, "ingestion", "postgres_connector.yaml")
+    if not os.path.exists(connector_file):
+        warn(f"Fichier connector introuvable: {connector_file}")
+    else:
+        cp = subprocess.run(
+            ["docker", "cp", connector_file, "openmetadata_ingestion:/tmp/postgres_connector.yaml"],
+            capture_output=True, text=True,
+        )
+        if cp.returncode != 0:
+            warn(f"Erreur lors de la copie: {cp.stderr[:200]}")
+        else:
+            ok("Fichier copie dans le container")
+    
+    # Ingestion via le container existant
+    print("   Lancement de l'ingestion des metadonnees...")
     try:
         r = subprocess.run(
-            compose_cmd + ["run", "--rm", "-T", "--no-deps",
-                           "--entrypoint", "metadata",
-                           "ingestion",
-                           "ingest", "-c",
-                           "/opt/airflow/ingestion/postgres_connector.yaml"],
+            ["docker", "exec", "openmetadata_ingestion",
+             "metadata", "ingest", "-c",
+             "/tmp/postgres_connector.yaml"],
             capture_output=True, text=True,
             timeout=300,
         )
@@ -381,23 +439,37 @@ def main():
         r = None
 
     if r and r.returncode == 0:
-        ok("7 tables ingerees")
+        ok("Metadonnees PostgreSQL ingerees")
     else:
         warn(f"Ingestion terminee avec le code {r.returncode if r else 'timeout'}")
         if r and r.stderr:
-            print(f"      {r.stderr[:300]}")
+            print(f"      Stderr: {r.stderr[:500]}")
         if r and r.stdout:
-            print(f"      {r.stdout[:300]}")
+            print(f"      Stdout: {r.stdout[:500]}")
 
     # ── 8. Configuration des metadonnees ──────────────────────────────
     print("\n[8/8] Configuration des metadonnees (tags, glossaire, lineage)")
+
+    # Recharger le .env pour avoir le JWT fraichement injecte
+    from dotenv import load_dotenv
+    load_dotenv(ENV_FILE, override=True)
+    jwt_from_env = os.getenv("OPENMETADATA_JWT_TOKEN")
+    
+    if not jwt_from_env or jwt_from_env == "your_jwt_token_here":
+        warn("JWT non trouve dans .env apres injection")
+        return
 
     r = subprocess.run(
         [sys.executable, "-X", "utf8", str(SETUP_SCRIPT)],
         capture_output=True,
         encoding="utf-8",
         errors="replace",
-        env={**os.environ, "PYTHONIOENCODING": "utf-8"},
+        env={
+            **os.environ, 
+            "PYTHONIOENCODING": "utf-8",
+            "OPENMETADATA_JWT_TOKEN": jwt_from_env,
+            "OPENMETADATA_URL": OM_API,
+        },
     )
     if r.stdout:
         print(r.stdout)
