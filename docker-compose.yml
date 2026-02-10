@@ -26,7 +26,7 @@ services:
       - ./:/home/jovyan/work
     environment:
       JUPYTER_ENABLE_LAB: "yes"
-      PYDEVD_DISABLE_FILE_VALIDATION: "1" 
+      PYDEVD_DISABLE_FILE_VALIDATION: "1"
       PYTHONUNBUFFERED: "1"
     depends_on:
       postgres:
@@ -90,24 +90,9 @@ services:
       - ./logs:/opt/airflow/logs
       - /var/run/docker.sock:/var/run/docker.sock
       - ./:/opt/airflow/project
+      - ./scripts/airflow-entrypoint.sh:/entrypoint.sh:ro
     user: "root"
-    command: >
-      bash -c "
-        echo ' Installation Docker CLI récent...' &&
-        apt-get update -qq &&
-        apt-get install -y -qq ca-certificates curl gnupg lsb-release &&
-        install -m 0755 -d /etc/apt/keyrings &&
-        curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg &&
-        chmod a+r /etc/apt/keyrings/docker.gpg &&
-        echo \"deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian bullseye stable\" > /etc/apt/sources.list.d/docker.list &&
-        apt-get update -qq &&
-        apt-get install -y -qq docker-ce-cli &&
-        echo '✅ Docker CLI installé' &&
-        docker version --format 'API version: {{.Client.APIVersion}}' &&
-        airflow db init &&
-        airflow users create --username admin --password admin --firstname Admin --lastname User --role Admin --email admin@example.com || true &&
-        airflow webserver & airflow scheduler
-      "
+    entrypoint: ["/bin/bash", "/entrypoint.sh"]
     depends_on:
       postgres:
         condition: service_healthy

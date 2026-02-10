@@ -33,7 +33,7 @@ docker-compose up -d
 # Vérifier le statut d'Airflow
 docker logs airflow_standalone
 
-# Le DAG apparaîtra automatiquement dans l'interface web
+# Le DAG apparaîtra automatiquement dans l'interface web (il faut attendre quelques minutes)
 ```
 
 ### Notes
