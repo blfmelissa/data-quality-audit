@@ -54,8 +54,18 @@ with DAG(
             --database_name DataQualitySteamDB \
             --uri postgresql+psycopg2://postgres:postgres@postgres:5432/games_db
         
+        echo "Attentez quelques secondes pour que Superset soit prêt..."
+        sleep 10
+
         echo "✅ Superset configuré sur http://localhost:8088"
         ''',
+        execution_timeout=timedelta(minutes=5),
+    )
+    
+    setup_superset_dashboards = BashOperator(
+        task_id='setup_superset_dashboards',
+        bash_command='python /opt/airflow/project/scripts/setup_superset.py',
+        execution_timeout=timedelta(minutes=5),
     )
 
     load_data = BashOperator(
@@ -115,4 +125,4 @@ with DAG(
         ''',
     )
 
-    check_docker >> setup_superset >> load_data >> generate_reports >> run_notebook_01 >> run_notebook_02 >> run_notebook_03 >> run_validation
+    check_docker >> setup_superset >> setup_superset_dashboards >> load_data >> generate_reports >> run_notebook_01 >> run_notebook_02 >> run_notebook_03 >> run_validation
