@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-echo '�� Installation Docker CLI officiel et PostgreSQL client...'
+echo 'Installation Docker CLI officiel et PostgreSQL client...'
 apt-get update -qq
 apt-get install -y -qq ca-certificates curl gnupg lsb-release postgresql-client
 install -m 0755 -d /etc/apt/keyrings
@@ -20,10 +20,10 @@ until PGPASSWORD=postgres psql -h postgres -U postgres -tAc "select 1 from pg_da
 done
 echo '✅ Base airflow_db prête'
 
-echo '��️ Initialisation Airflow...'
+echo 'Initialisation Airflow...'
 gosu airflow airflow db migrate
 
-echo '�� Création utilisateur admin...'
+echo 'Création utilisateur admin...'
 gosu airflow airflow users create \
   --username admin \
   --password admin \
@@ -32,6 +32,6 @@ gosu airflow airflow users create \
   --role Admin \
   --email admin@example.com || true
 
-echo '�� Démarrage Airflow webserver et scheduler...'
+echo 'Démarrage Airflow webserver et scheduler...'
 gosu airflow airflow webserver &
 gosu airflow airflow scheduler
