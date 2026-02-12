@@ -125,4 +125,4 @@ with DAG(
         ''',
     )
 
-    check_docker >> setup_superset >> setup_superset_dashboards >> load_data >> generate_reports >> run_notebook_01 >> run_notebook_02 >> run_notebook_03 >> run_validation
+    check_docker >> setup_superset >> load_data >> generate_reports >> run_notebook_01 >> run_notebook_02 >> run_notebook_03 >> setup_superset_dashboards >> run_validation
